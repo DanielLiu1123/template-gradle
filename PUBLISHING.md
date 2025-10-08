@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-- Go to [Maven Central](https://central.sonatype.com/) and create an account, then generate a user token.
+- Go to [Maven Central](https://central.sonatype.com/) and create an account, then generate a user token
 
-- Generate a GPG key pair.
+- Generate a GPG key pair
 
     ```shell
     gpg --gen-key
@@ -14,7 +14,7 @@
     gpg --keyserver keyserver.ubuntu.com --send-keys <key-id>
     ```
 
-- Add secrets to GitHub repository:
+- Add secrets to GitHub repository
     
     ```shell
     gh secret set MAVENCENTRAL_USERNAME --body "your-username"
