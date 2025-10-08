@@ -1,1 +1,1 @@
-# gradle-template
+# template-gradle
