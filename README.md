@@ -3,13 +3,8 @@
 A Gradle project template with integrated GitHub actions, linting, formatting, and Maven Central publishing workflow.
 
 ```shell
-gh repo create <your-repo-name> --description <your-repo-description> --template DanielLiu1123/template-gradle --public
+gh repo create <your-repo-name> --template DanielLiu1123/template-gradle --public
 ```
-
-## Table of Contents
-
-- [Build](#build)
-- [Publishing](#publishing)
 
 ## Build
 

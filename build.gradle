@@ -47,6 +47,7 @@ subprojects {
 
     test {
         useJUnitPlatform()
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
     }
 
     apply plugin: "com.diffplug.spotless"
