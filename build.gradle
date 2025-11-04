@@ -3,13 +3,11 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}" apply false
     id "com.github.spotbugs" version "${spotbugsVersion}" apply false
     id "org.jreleaser" version "${jReleaserVersion}" apply false
-    id "io.spring.nullability" version "+" apply false
 }
 
 subprojects {
     apply plugin: "java"
     apply plugin: "java-library"
-    apply plugin: "io.spring.nullability"
 
     tasks.withType(JavaCompile).configureEach {
         options.compilerArgs += ["-parameters"]
