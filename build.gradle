@@ -38,7 +38,7 @@ subprojects {
         testAnnotationProcessor("org.projectlombok:lombok:+")
         compileOnly("com.github.spotbugs:spotbugs-annotations:${spotbugsAnnotationsVersion}")
 
-        implementation("org.jspecify:jspecify:+")
+        api("org.jspecify:jspecify:+")
 
         testImplementation(platform("org.junit:junit-bom:+"))
         testImplementation("org.junit.jupiter:junit-jupiter")
