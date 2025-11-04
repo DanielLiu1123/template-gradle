@@ -73,13 +73,15 @@ publishing {
 
 def getOptionalDependencies() {
     def result = []
+    def optionalCfg = project.configurations.findByName("optional")
+    if (optionalCfg == null) return result
 
-    def resolvedDeps = project.configurations.optional.resolvedConfiguration.resolvedArtifacts
+    def resolvedDeps = optionalCfg.resolvedConfiguration.resolvedArtifacts
             .stream()
             .map(e -> e.moduleVersion.id)
             .collect(java.util.stream.Collectors.toMap(dep -> dep.group + ":" + dep.name, dep -> dep.version))
 
-    for (dep in project.configurations.optional.allDependencies) {
+    for (dep in optionalCfg.allDependencies) {
         def version = resolvedDeps[dep.group + ":" + dep.name]
         if (dep.group && dep.name && version) {
             result.add([group: dep.group, name: dep.name, version: version])

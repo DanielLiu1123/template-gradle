@@ -41,8 +41,9 @@ subprojects {
         implementation("org.jspecify:jspecify:+")
 
         testImplementation(platform("org.junit:junit-bom:+"))
-        // https://docs.gradle.org/current/userguide/upgrading_version_8.html#test_framework_implementation_dependencies
+        testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+        testImplementation("org.assertj:assertj-core:+")
     }
 
     test {
@@ -74,7 +75,7 @@ subprojects {
     spotbugs {
         spotbugsTest.enabled = false
         omitVisitors.addAll "FindReturnRef", "DontReusePublicIdentifiers"
-        excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
+        excludeFilter = file("${rootDir}/gradle/config/spotbugs/exclude.xml")
     }
 }
 
