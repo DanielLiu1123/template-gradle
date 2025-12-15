@@ -2,7 +2,7 @@ plugins {
     id "org.springframework.boot" version "${springBootVersion}" apply false
     id "com.diffplug.spotless" version "${spotlessVersion}" apply false
     id "com.github.spotbugs" version "${spotbugsVersion}" apply false
-    id "io.github.danielliu1123.deployer" version "0.2.0"
+    id "io.github.danielliu1123.deployer" version "0.3.0"
 }
 
 deploy {
