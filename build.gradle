@@ -2,15 +2,19 @@ plugins {
     id "org.springframework.boot" version "${springBootVersion}" apply false
     id "com.diffplug.spotless" version "${spotlessVersion}" apply false
     id "com.github.spotbugs" version "${spotbugsVersion}" apply false
-    id "io.github.danielliu1123.deployer" version "0.3.0"
+    id "io.spring.nullability" version "${springNullabilityVersion}" apply false
+    id "io.github.danielliu1123.deployer" version "${deployerVersion}"
 }
 
 deploy {
     // dirs to upload, they will all be packaged into one bundle
-    dirs = subprojects.collect { e -> e.layout.buildDirectory.dir("repo").get().getAsFile() }
+    dirs = subprojects.stream()
+            .map(e -> e.layout.buildDirectory.dir("repo").get().getAsFile())
+            .filter(e -> e.exists())
+            .toList()
     username = System.getenv("MAVENCENTRAL_USERNAME")
     password = System.getenv("MAVENCENTRAL_PASSWORD")
-    publishingType = io.github.danielliu1123.deployer.PublishingType.AUTOMATIC
+    publishingType = io.github.danielliu1123.deployer.PublishingType.WAIT_FOR_PUBLISHED
 }
 
 subprojects {
@@ -19,6 +23,8 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.compilerArgs += ["-parameters"]
+        // https://github.com/uber/NullAway/wiki/JSpecify-Support#supported-jdk-versions
+        options.compilerArgs += ["-XDaddTypeAnnotationsToSymbol=true"]
         options.encoding = "UTF-8"
     }
 
@@ -85,4 +91,6 @@ subprojects {
         omitVisitors.addAll "FindReturnRef", "DontReusePublicIdentifiers"
         excludeFilter = file("${rootDir}/gradle/config/spotbugs/exclude.xml")
     }
+
+    apply plugin: "io.spring.nullability"
 }

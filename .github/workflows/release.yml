@@ -44,4 +44,4 @@ jobs:
         run: |
           tag=${{ github.ref_name }}
           ./gradlew clean publish --no-daemon --no-configuration-cache -Pversion=${tag#v}
-          ./gradlew deploy
+          ./gradlew deploy --no-daemon
