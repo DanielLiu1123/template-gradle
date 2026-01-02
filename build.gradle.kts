@@ -1,0 +1,96 @@
+plugins {
+    id("org.springframework.boot") apply false
+    id("com.diffplug.spotless") apply false
+    id("net.ltgt.errorprone") apply false
+    id("io.github.danielliu1123.deployer")
+}
+
+val errorProneCoreVersion: String = providers.gradleProperty("errorProneCoreVersion").get()
+val nullAwayVersion: String = providers.gradleProperty("nullAwayVersion").get()
+
+deploy {
+    dirs = subprojects.map { it.layout.buildDirectory.dir("repo").get().asFile }.filter { it.exists() }
+    username = System.getenv("MAVENCENTRAL_USERNAME")
+    password = System.getenv("MAVENCENTRAL_PASSWORD")
+    publishingType = io.github.danielliu1123.deployer.PublishingType.WAIT_FOR_PUBLISHED
+}
+
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "java-library")
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.addAll(listOf("-parameters", "-XDaddTypeAnnotationsToSymbol=true"))
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType<Javadoc>().configureEach {
+        // Suppress warnings about missing Javadoc comments
+        (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    }
+
+    val optional = configurations.create("optional")
+    configurations.named("compileOnly") { extendsFrom(optional) }
+    val provided = configurations.create("provided")
+    configurations.named("compileOnly") { extendsFrom(provided) }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        val compileOnly by configurations
+        val annotationProcessor by configurations
+        val testCompileOnly by configurations
+        val testAnnotationProcessor by configurations
+
+        compileOnly("org.projectlombok:lombok:+")
+        annotationProcessor("org.projectlombok:lombok:+")
+        testCompileOnly("org.projectlombok:lombok:+")
+        testAnnotationProcessor("org.projectlombok:lombok:+")
+
+        "testImplementation"(platform("org.junit:junit-bom:+"))
+        "testImplementation"("org.junit.jupiter:junit-jupiter")
+        "testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
+        "testImplementation"("org.assertj:assertj-core:+")
+    }
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+    }
+
+    apply(plugin = "com.diffplug.spotless")
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        java {
+            targetExclude("**/generated/**")
+
+            toggleOffOn()
+            removeUnusedImports()
+            forbidWildcardImports()
+            importOrder()
+            formatAnnotations()
+            trimTrailingWhitespace()
+            endWithNewline()
+            palantirJavaFormat()
+        }
+    }
+
+    apply(plugin = "net.ltgt.errorprone")
+    dependencies {
+        val errorprone by configurations
+        errorprone("com.google.errorprone:error_prone_core:$errorProneCoreVersion")
+        errorprone("com.uber.nullaway:nullaway:$nullAwayVersion")
+    }
+    tasks.withType<JavaCompile>().configureEach {
+        (options as ExtensionAware).extensions.configure<net.ltgt.gradle.errorprone.ErrorProneOptions>("errorprone") {
+            // https://github.com/tbroyer/gradle-errorprone-plugin?tab=readme-ov-file#properties
+            excludedPaths.set(".*/generated/.*")
+            // https://github.com/uber/NullAway/wiki/Configuration
+            check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+            option("NullAway:AnnotatedPackages", "your.base.package")
+            option("NullAway:HandleTestAssertionLibraries", "true")
+        }
+    }
+}
