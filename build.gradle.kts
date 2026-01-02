@@ -29,9 +29,9 @@ subprojects {
         (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
     }
 
-    val optional = configurations.create("optional")
+    val optional by configurations.creating
     configurations.named("compileOnly") { extendsFrom(optional) }
-    val provided = configurations.create("provided")
+    val provided by configurations.creating
     configurations.named("compileOnly") { extendsFrom(provided) }
 
     repositories {
@@ -40,15 +40,10 @@ subprojects {
     }
 
     dependencies {
-        val compileOnly by configurations
-        val annotationProcessor by configurations
-        val testCompileOnly by configurations
-        val testAnnotationProcessor by configurations
-
-        compileOnly("org.projectlombok:lombok:+")
-        annotationProcessor("org.projectlombok:lombok:+")
-        testCompileOnly("org.projectlombok:lombok:+")
-        testAnnotationProcessor("org.projectlombok:lombok:+")
+        "compileOnly"("org.projectlombok:lombok:+")
+        "annotationProcessor"("org.projectlombok:lombok:+")
+        "testCompileOnly"("org.projectlombok:lombok:+")
+        "testAnnotationProcessor"("org.projectlombok:lombok:+")
 
         "testImplementation"(platform("org.junit:junit-bom:+"))
         "testImplementation"("org.junit.jupiter:junit-jupiter")
@@ -79,9 +74,8 @@ subprojects {
 
     apply(plugin = "net.ltgt.errorprone")
     dependencies {
-        val errorprone by configurations
-        errorprone("com.google.errorprone:error_prone_core:$errorProneCoreVersion")
-        errorprone("com.uber.nullaway:nullaway:$nullAwayVersion")
+        "errorprone"("com.google.errorprone:error_prone_core:$errorProneCoreVersion")
+        "errorprone"("com.uber.nullaway:nullaway:$nullAwayVersion")
     }
     tasks.withType<JavaCompile>().configureEach {
         (options as ExtensionAware).extensions.configure<net.ltgt.gradle.errorprone.ErrorProneOptions>("errorprone") {
@@ -89,7 +83,7 @@ subprojects {
             excludedPaths.set(".*/generated/.*")
             // https://github.com/uber/NullAway/wiki/Configuration
             check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
-            option("NullAway:AnnotatedPackages", "your.base.package")
+            option("NullAway:AnnotatedPackages", "com.example")
             option("NullAway:HandleTestAssertionLibraries", "true")
         }
     }
