@@ -83,9 +83,8 @@ subprojects {
         "errorprone"("com.uber.nullaway:nullaway:$nullAwayVersion")
     }
     tasks.withType<JavaCompile>().configureEach {
-        val isErrorProneEnabled = project.findProperty("errorprone.enabled")?.toString()?.toBoolean() != false
+        enabled = project.findProperty("errorprone.enabled")?.toString()?.toBoolean() != false
         (options as ExtensionAware).extensions.configure<net.ltgt.gradle.errorprone.ErrorProneOptions>("errorprone") {
-            enabled = isErrorProneEnabled
             // https://github.com/tbroyer/gradle-errorprone-plugin?tab=readme-ov-file#properties
             excludedPaths.set(".*/generated/.*")
             // https://github.com/uber/NullAway/wiki/Configuration
