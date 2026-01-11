@@ -11,7 +11,5 @@ public class MyAutoConfiguration implements SmartInitializingSingleton {
         System.out.println("MyAutoConfiguration's afterSingletonsInstantiated() method is called...");
     }
 
-    private static void violationMethod(@Nullable String arg) {
-        arg.isEmpty();
-    }
+    private static void violationMethod(@Nullable String arg) {}
 }
