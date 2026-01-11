@@ -88,7 +88,7 @@ subprojects {
         options.errorprone {
             isEnabled = project.findProperty("errorprone.enabled")?.toString()?.toBoolean() != false
             // https://github.com/tbroyer/gradle-errorprone-plugin?tab=readme-ov-file#properties
-            excludedPaths.set(".*/generated/.*")
+            excludedPaths = ".*/generated/.*"
             // https://github.com/uber/NullAway/wiki/Configuration
             check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
             option("NullAway:AnnotatedPackages", "com.example")
