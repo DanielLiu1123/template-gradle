@@ -1,3 +1,5 @@
+import net.ltgt.gradle.errorprone.errorprone
+
 plugins {
     id("org.springframework.boot") apply false
     id("com.diffplug.spotless") apply false
@@ -83,8 +85,8 @@ subprojects {
         "errorprone"("com.uber.nullaway:nullaway:$nullAwayVersion")
     }
     tasks.withType<JavaCompile>().configureEach {
-        enabled = project.findProperty("errorprone.enabled")?.toString()?.toBoolean() != false
-        (options as ExtensionAware).extensions.configure<net.ltgt.gradle.errorprone.ErrorProneOptions>("errorprone") {
+        options.errorprone {
+            isEnabled = project.findProperty("errorprone.enabled")?.toString()?.toBoolean() != false
             // https://github.com/tbroyer/gradle-errorprone-plugin?tab=readme-ov-file#properties
             excludedPaths.set(".*/generated/.*")
             // https://github.com/uber/NullAway/wiki/Configuration
