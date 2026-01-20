@@ -33,7 +33,7 @@ subprojects {
 
     tasks.withType<Javadoc>().configureEach {
         // Suppress warnings about missing Javadoc comments
-        (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+        (options as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
     }
 
     val optional by configurations.creating
