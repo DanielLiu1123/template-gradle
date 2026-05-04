@@ -1,3 +1,7 @@
+plugins {
+    id("deploy")
+}
+
 description = "Module 1"
 
 val springBootVersion: String = providers.gradleProperty("springBootVersion").get()
@@ -8,6 +12,3 @@ dependencies {
 
     optional("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
 }
-
-apply(from = "${rootDir}/gradle/deploy.gradle.kts")
-

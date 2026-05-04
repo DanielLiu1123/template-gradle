@@ -1,6 +1,10 @@
-apply(plugin = "java-library")
-apply(plugin = "maven-publish")
-apply(plugin = "signing")
+import groovy.util.Node
+import groovy.util.NodeList
+import org.gradle.api.plugins.JavaPluginExtension
+
+plugins.apply("java-library")
+plugins.apply("maven-publish")
+plugins.apply("signing")
 
 configure<JavaPluginExtension> {
     withSourcesJar()
@@ -8,7 +12,7 @@ configure<JavaPluginExtension> {
 }
 
 // see https://docs.gradle.org/9.1.0/userguide/configuration_cache_requirements.html#config_cache:requirements:external_processes
-val githubUrl = providers.exec {
+val githubUrl: Provider<String> = providers.exec {
     commandLine("git", "-C", rootDir, "config", "--get", "remote.origin.url")
 }.standardOutput.asText
 
@@ -49,13 +53,12 @@ configure<PublishingExtension> {
                     developerConnection.set(githubUrl.map { "scm:git:ssh@${it.substring(8)}.git" })
                     url.set(githubUrl)
                 }
-                // Capture optional dependencies at configuration time for Configuration Cache compatibility
-                val optionalDeps = getDependencies("optional")
-                val providedDeps = getDependencies("provided")
                 withXml {
+                    val optionalDeps = getDependencies("optional")
+                    val providedDeps = getDependencies("provided")
                     // Generate optional dependencies for optional configuration
-                    val dependencies = asNode().get("dependencies") as? groovy.util.NodeList
-                    val dependenciesNode = (dependencies?.get(0) as? groovy.util.Node) ?: asNode().appendNode("dependencies")
+                    val dependencies = asNode().get("dependencies") as? NodeList
+                    val dependenciesNode = (dependencies?.get(0) as? Node) ?: asNode().appendNode("dependencies")
                     for (dep in optionalDeps) {
                         val dependency = dependenciesNode.appendNode("dependency")
                         dependency.appendNode("groupId", dep["group"])

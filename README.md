@@ -8,7 +8,7 @@ gh repo create <your-repo-name> --template DanielLiu1123/template-gradle --publi
 
 ## Build
 
-This project uses [Spotless](https://github.com/diffplug/spotless) and [Spotbugs](https://github.com/spotbugs/spotbugs) for formating and linting.
+This project uses [Spotless](https://github.com/diffplug/spotless) and [error-prone](https://github.com/google/error-prone) for formating and linting.
 
 ```shell
 ./gradlew build

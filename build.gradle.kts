@@ -18,8 +18,8 @@ deploy {
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "java-library")
+    plugins.apply("java")
+    plugins.apply("java-library")
 
     configure<JavaPluginExtension> {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -36,9 +36,9 @@ subprojects {
         (options as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
     }
 
-    val optional by configurations.creating
+    val optional = configurations.create("optional")
     configurations.named("compileOnly") { extendsFrom(optional) }
-    val provided by configurations.creating
+    val provided = configurations.create("provided")
     configurations.named("compileOnly") { extendsFrom(provided) }
 
     repositories {
@@ -63,7 +63,7 @@ subprojects {
         jvmArgs("-XX:+EnableDynamicAgentLoading")
     }
 
-    apply(plugin = "com.diffplug.spotless")
+    plugins.apply("com.diffplug.spotless")
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         java {
             targetExclude("**/generated/**")
@@ -79,7 +79,7 @@ subprojects {
         }
     }
 
-    apply(plugin = "net.ltgt.errorprone")
+    plugins.apply("net.ltgt.errorprone")
     dependencies {
         "errorprone"("com.google.errorprone:error_prone_core:$errorProneCoreVersion")
         "errorprone"("com.uber.nullaway:nullaway:$nullAwayVersion")
